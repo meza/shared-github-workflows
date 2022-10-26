@@ -1,0 +1,76 @@
+name: Lint and Test
+
+on:
+  workflow_call:
+    inputs:
+      github-token:
+        description: "The GitHub token to use"
+        required: true
+        type: string
+      npm-token:
+        description: "The NPM token to use"
+        required: true
+        type: string
+      node-version:
+        description: "The version of node to use"
+        required: false
+        type: string
+        default: "latest"
+      junit-report-path:
+        description: "The path to the JUnit report"
+        required: false
+        type: string
+        default: "reports/junit.xml"
+      cobertura-report-path:
+        description: "The path to the Cobertura report"
+        required: false
+        type: string
+        default: "reports/coverage/cobertura-coverage.xml"
+    outputs:
+      new-release-published:
+        description: "If a new release was published"
+        value: ${{ steps.get-next-version.outputs.new-release-published }}
+      new-release-version:
+        description: "The version of the new release"
+        value: ${{ steps.get-next-version.outputs.new-release-version }}
+
+jobs:
+  verify:
+    name: 🔎 Lint and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up node
+        uses: meza/action-setup-node-pnpm@main
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache-name: pure-dependencies
+      - run: pnpm ci
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: always()
+        with:
+          junit_files: ${{ inputs.junit-report-path }}
+      - name: Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: always()
+        with:
+          format: markdown
+          output: file
+          hide_complexity: false
+          badge: true
+          filename: ${{ inputs.cobertura-report-path }}
+      - name: Publish code coverage report
+        if: always()
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md
+      - run: npx semantic-release --dry-run
+        id: get-next-version
+        env:
+          GITHUB_TOKEN: ${{ inputs.github-token }}
+          NPM_TOKEN: ${{ inputs.npm-token }}
