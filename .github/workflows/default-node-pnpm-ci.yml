@@ -26,10 +26,10 @@ on:
     outputs:
       new-release-published:
         description: "If a new release was published"
-        value: ${{ steps.get-next-version.outputs.new-release-published }}
+        value: ${{ jobs.verify.steps.get-next-version.outputs.new-release-published }}
       new-release-version:
         description: "The version of the new release"
-        value: ${{ steps.get-next-version.outputs.new-release-version }}
+        value: ${{ jobs.verify.steps.get-next-version.outputs.new-release-version }}
 
 jobs:
   verify:
