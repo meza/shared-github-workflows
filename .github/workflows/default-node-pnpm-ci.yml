@@ -3,14 +3,6 @@ name: Lint and Test
 on:
   workflow_call:
     inputs:
-      github-token:
-        description: "The GitHub token to use"
-        required: true
-        type: string
-      npm-token:
-        description: "The NPM token to use"
-        required: true
-        type: string
       node-version:
         description: "The version of node to use"
         required: false
@@ -26,6 +18,11 @@ on:
         required: false
         type: string
         default: "reports/coverage/cobertura-coverage.xml"
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
     outputs:
       new-release-published:
         description: "If a new release was published"
@@ -72,5 +69,5 @@ jobs:
       - run: npx semantic-release --dry-run
         id: get-next-version
         env:
-          GITHUB_TOKEN: ${{ inputs.github-token }}
-          NPM_TOKEN: ${{ inputs.npm-token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
