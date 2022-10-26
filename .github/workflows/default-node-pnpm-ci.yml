@@ -26,15 +26,18 @@ on:
     outputs:
       new-release-published:
         description: "If a new release was published"
-        value: ${{ jobs.verify.steps.get-next-version.outputs.new-release-published }}
+        value: ${{ jobs.verify.outputs.new-release-published }}
       new-release-version:
         description: "The version of the new release"
-        value: ${{ jobs.verify.steps.get-next-version.outputs.new-release-version }}
+        value: ${{ jobs.verify.outputs.new-release-version }}
 
 jobs:
   verify:
     name: 🔎 Lint and Test
     runs-on: ubuntu-latest
+    outputs:
+      new-release-published: ${{ steps.get-next-version.outputs.new-release-published }}
+      new-release-version: ${{ steps.get-next-version.outputs.new-release-version }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up node
