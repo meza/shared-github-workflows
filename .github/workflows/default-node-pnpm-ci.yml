@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: "reports/coverage/cobertura-coverage.xml"
+      cache-name:
+        description: "The name to assign to the cache"
+        required: false
+        type: string
+        default: pure-dependencies
     secrets:
       GH_TOKEN:
         required: true
@@ -30,6 +35,9 @@ on:
       new-release-version:
         description: "The version of the new release"
         value: ${{ jobs.verify.outputs.new-release-version }}
+      cache-name:
+        description: "The cache name used"
+        value: ${{ inputs.cache-name }}
 
 jobs:
   verify:
@@ -44,7 +52,7 @@ jobs:
         uses: meza/action-setup-node-pnpm@main
         with:
           node-version: ${{ inputs.node-version }}
-          cache-name: pure-dependencies
+          cache-name: ${{ inputs.cache-name }}
       - run: pnpm ci
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
