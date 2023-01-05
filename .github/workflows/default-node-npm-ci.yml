@@ -1,0 +1,90 @@
+name: Lint and Test
+
+on:
+  workflow_call:
+    inputs:
+      test:
+        description: 'Run tests'
+        required: false
+        default: true
+        type: boolean
+      node-version:
+        description: "The version of node to use"
+        required: false
+        type: string
+        default: "latest"
+      junit-report-path:
+        description: "The path to the JUnit report"
+        required: false
+        type: string
+        default: "reports/junit.xml"
+      cobertura-report-path:
+        description: "The path to the Cobertura report"
+        required: false
+        type: string
+        default: "reports/coverage/cobertura-coverage.xml"
+      cache-name:
+        description: "The name to assign to the cache"
+        required: false
+        type: string
+        default: pure-dependencies
+    secrets:
+      GH_TOKEN:
+        required: true
+      NPM_TOKEN:
+        required: true
+    outputs:
+      new-release-published:
+        description: "If a new release was published"
+        value: ${{ jobs.verify.outputs.new-release-published }}
+      new-release-version:
+        description: "The version of the new release"
+        value: ${{ jobs.verify.outputs.new-release-version }}
+      cache-name:
+        description: "The cache name used"
+        value: ${{ inputs.cache-name }}
+
+jobs:
+  verify:
+    name: 🔎 Lint and Test
+    runs-on: ubuntu-latest
+    outputs:
+      new-release-published: ${{ steps.get-next-version.outputs.new-release-published }}
+      new-release-version: ${{ steps.get-next-version.outputs.new-release-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up node
+        uses: meza/action-setup-node-npm@main
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache-name: ${{ inputs.cache-name }}
+      - run: npm run ci
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: {{ inputs.test }}
+        with:
+          junit_files: ${{ inputs.junit-report-path }}
+      - name: Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: {{ inputs.test }}
+        with:
+          format: markdown
+          output: file
+          hide_complexity: false
+          badge: true
+          filename: ${{ inputs.cobertura-report-path }}
+      - name: Publish code coverage report
+        if: {{ inputs.test }}
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: (github.event_name == 'pull_request') && (inputs.test)
+        with:
+          recreate: true
+          path: code-coverage-results.md
+      - run: npx semantic-release --dry-run
+        id: get-next-version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: echo "Need release? ${{ steps.get-next-version.outputs.new-release-published }}" >> $GITHUB_STEP_SUMMARY
