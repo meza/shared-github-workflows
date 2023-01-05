@@ -61,12 +61,12 @@ jobs:
       - run: npm run ci
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: {{ inputs.test }}
+        if: inputs.test
         with:
           junit_files: ${{ inputs.junit-report-path }}
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
-        if: {{ inputs.test }}
+        if: inputs.test
         with:
           format: markdown
           output: file
@@ -74,7 +74,7 @@ jobs:
           badge: true
           filename: ${{ inputs.cobertura-report-path }}
       - name: Publish code coverage report
-        if: {{ inputs.test }}
+        if: inputs.test
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
