@@ -31,6 +31,8 @@ on:
     secrets:
       GH_TOKEN:
         required: true
+      NPM_TOKEN:
+        required: false
     outputs:
       new-release-published:
         description: "If a new release was published"
