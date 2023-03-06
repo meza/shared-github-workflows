@@ -28,6 +28,11 @@ on:
         required: false
         type: string
         default: "reports/coverage/cobertura-coverage.xml"
+      cpdPath:
+        description: "Where is your markdown cpd report generated to?"
+        required: false
+        type: string
+        default: "reports/jscpd/jscpd-report.md"
       cache-name:
         description: "The name to assign to the cache"
         required: false
@@ -88,6 +93,20 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
+      - name: "Check cpd existence"
+        id: cpd_exists
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "${{ inputs.cpdPath }}"
+      - name: Publish jscpd report
+        if: (inputs.test) && (steps.cpd_exists.outputs.files_exists == 'true')
+        run: cat ${{ inputs.cpdPath }} >> $GITHUB_STEP_SUMMARY
+      - name: Add CPD Report PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: (github.event_name == 'pull_request') && (inputs.test) && (steps.cpd_exists.outputs.files_exists == 'true')
+        with:
+          recreate: true
+          path: ${{ inputs.cpdPath }}
       - run: npx semantic-release --dry-run
         id: get-next-version
         env:
