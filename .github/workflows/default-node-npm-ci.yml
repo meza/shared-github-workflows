@@ -105,6 +105,7 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         if: (github.event_name == 'pull_request') && (inputs.test) && (steps.cpd_exists.outputs.files_exists == 'true')
         with:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           recreate: true
           path: ${{ inputs.cpdPath }}
       - run: npx semantic-release --dry-run
