@@ -5,7 +5,7 @@ on:
     inputs:
       command:
         description: "Which command to run when installing the dependencies? It will be appended to `npm ` Default: ci"
-        default: ci
+        default: install --no-audit --no-fund
         required: false
         type: string
       test:
