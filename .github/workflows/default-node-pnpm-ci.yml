@@ -51,7 +51,7 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           cache-name: ${{ inputs.cache-name }}
-      - run: pnpm ci
+      - run: pnpm run ci
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always()
