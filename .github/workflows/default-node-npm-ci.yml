@@ -95,7 +95,7 @@ jobs:
           path: code-coverage-results.md
       - name: "Check cpd existence"
         id: cpd_exists
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "${{ inputs.cpdPath }}"
       - name: Publish jscpd report
