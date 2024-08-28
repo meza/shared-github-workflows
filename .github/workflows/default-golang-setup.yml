@@ -1,0 +1,28 @@
+name: Set up Golang
+
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        description: "The version of node to use"
+        required: false
+        type: string
+        default: "latest"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        name: 🔧 Set up Node.js
+        with:
+          node-version: 'latest'
+      - uses: actions/setup-go@v5
+        name: 🔧 Set up Go ${{ inputs.go-version }}
+        with:
+          go-version:  ${{ inputs.go-version }}
+
+      - name: 📦 Install dependencies
+        run: |
+          go get .
+          go install github.com/ctrf-io/go-ctrf-json-reporter/cmd/go-ctrf-json-reporter@latest
