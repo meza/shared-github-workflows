@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Use Node.js ${{ inputs.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -37,7 +37,7 @@ jobs:
 
       - name: Cache build helpers
         id: cache-build-data
-        uses: pat-s/always-upload-cache@v3
+        uses: pat-s/always-upload-cache@v3.0.11
         if: always()
         env:
           cache-name: cache-build-data
@@ -45,7 +45,7 @@ jobs:
           path: ./.cache
           key: ${{ runner.os }}-build-data-${{ inputs.cache-name }}
 
-      - uses: pat-s/always-upload-cache@v3
+      - uses: pat-s/always-upload-cache@v3.0.11
         name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}

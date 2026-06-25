@@ -62,7 +62,7 @@ jobs:
       new-release-published: ${{ steps.get-next-version.outputs.new-release-published }}
       new-release-version: ${{ steps.get-next-version.outputs.new-release-version }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.0
       - name: Set up node
         uses: meza/action-setup-node-npm@main
         with:
@@ -71,7 +71,7 @@ jobs:
           cache-name: ${{ inputs.cache-name }}
       - run: npm run ci
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2.24.0
         if: inputs.test
         with:
           junit_files: ${{ inputs.junit-report-path }}
@@ -95,7 +95,7 @@ jobs:
           path: code-coverage-results.md
       - name: "Check cpd existence"
         id: cpd_exists
-        uses: andstor/file-existence-action@v3
+        uses: andstor/file-existence-action@v3.1.0
         with:
           files: "${{ inputs.cpdPath }}"
       - name: Publish jscpd report

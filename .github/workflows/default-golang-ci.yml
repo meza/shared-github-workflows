@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6.4.0
         name: 🔧 Set up Node.js
         with:
           node-version: 'latest'
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v6.5.0
         name: 🔧 Set up Go ${{ inputs.go-version }}
         with:
           go-version:  ${{ inputs.go-version }}
