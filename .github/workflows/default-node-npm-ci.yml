@@ -64,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Set up node
-        uses: meza/action-setup-node-npm@eadf21e0155e62a54d3b72fb8530d5a12fa21146 # main
+        uses: meza/action-setup-node-npm@aab30425e3491190cf8c17b6064a34777a3a425a # main
         with:
           command: ${{ inputs.command }}
           node-version: ${{ inputs.node-version }}
