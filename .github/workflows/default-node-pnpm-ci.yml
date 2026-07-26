@@ -40,7 +40,7 @@ on:
 jobs:
   verify:
     name: 🔎 Lint and Test
-    runs-on: meza-ubuntu-latest
+    runs-on: meza-ubuntu-slim
     outputs:
       new-release-published: ${{ steps.get-next-version.outputs.new-release-published }}
       new-release-version: ${{ steps.get-next-version.outputs.new-release-version }}
@@ -57,24 +57,11 @@ jobs:
         if: always()
         with:
           junit_files: ${{ inputs.junit-report-path }}
-      - name: Code Coverage Summary Report
-        uses: irongut/CodeCoverageSummary@51cc3a756ddcd398d447c044c02cb6aa83fdae95 # v1.3.0
-        if: always()
+      - name: Code Coverage Report
+        uses: davelosert/vitest-coverage-report-action@8b157684c6a6b259b97d45e72b44242865c0f6a5 # v2.12.2
         with:
-          format: markdown
-          output: file
-          hide_complexity: false
-          badge: true
-          filename: ${{ inputs.cobertura-report-path }}
-      - name: Publish code coverage report
-        if: always()
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-      - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
-        if: github.event_name == 'pull_request'
-        with:
-          recreate: true
-          path: code-coverage-results.md
+          json-summary-path: reports/coverage/unit/coverage-summary.json
+          json-final-path: reports/coverage/unit/coverage-final.json
       - run: npx semantic-release --dry-run
         id: get-next-version
         env:
