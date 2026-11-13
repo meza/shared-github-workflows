@@ -53,12 +53,12 @@ jobs:
           cache-name: ${{ inputs.cache-name }}
       - run: pnpm run ci
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/composite@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2.24.0
+        uses: EnricoMi/publish-unit-test-result-action/composite@da5b7be67623cd59bbbd1a0ce4f022050a55605f # v2.26.0
         if: always()
         with:
           junit_files: ${{ inputs.junit-report-path }}
       - name: Code Coverage Report
-        uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73 # v2.13.0
+        uses: davelosert/vitest-coverage-report-action@74c2d9210b4fc44c84d8213f61d7ec99837b7aa0 # v2.13.2
         with:
           json-summary-path: reports/coverage/unit/coverage-summary.json
           json-final-path: reports/coverage/unit/coverage-final.json
